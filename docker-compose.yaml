@@ -1,0 +1,26 @@
+version: "3.1"
+volumes:
+  pg_test:
+
+services:
+  docker_test_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=142536
+      - POSTGRES_DB=docker_test_db
+    volumes:
+      - pg_test:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+  app:
+    restart: always
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - docker_test_db
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgres://docker_test_db:5432/docker_test_db"
+      JAVA_OPTS: "-Xmx512m"
